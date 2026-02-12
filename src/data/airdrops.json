@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Aerodrome",
+    "verifiedWebsiteLink": "https://aerodrome.finance",
+    "verifiedXHandle": "@aerodromefi",
+    "status": "Live"
+  },
+  {
+    "name": "Zora",
+    "verifiedWebsiteLink": "https://zora.co",
+    "verifiedXHandle": "@zora",
+    "status": "Live"
+  },
+  {
+    "name": "Farcaster",
+    "verifiedWebsiteLink": "https://farcaster.xyz",
+    "verifiedXHandle": "@farcaster_xyz",
+    "status": "Live"
+  },
+  {
+    "name": "Base Names",
+    "verifiedWebsiteLink": "https://basenames.xyz",
+    "verifiedXHandle": "@basenames_xyz",
+    "status": "Snapshot Pending"
+  },
+  {
+    "name": "Across",
+    "verifiedWebsiteLink": "https://across.to",
+    "verifiedXHandle": "@AcrossProtocol",
+    "status": "Live"
+  }
+]
