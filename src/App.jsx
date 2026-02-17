@@ -23,8 +23,7 @@ import { mainnet, base, optimism, arbitrum } from 'wagmi/chains';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { http } from 'viem';
 import { checkBaseBridgeUsage, checkAerodromeUser, checkUniswapUser, checkMainnetUniswap, checkENSUser, calculateSybilRisk } from './utils/eligibility';
-// --- 1. CONFIGURATION & INFRASTRUCTURE ---
-// TODO: Replace hardcoded Project ID with process.env.VITE_WALLET_CONNECT_ID
+import { Analytics } from "@vercel/analytics/next"// TODO: Replace hardcoded Project ID with process.env.VITE_WALLET_CONNECT_ID
 // TODO: Replace generic Alchemy keys with process.env.VITE_ALCHEMY_KEY for higher rate limits
 const ALCHEMY_KEY = "ytxCB4rIWPgqDz3knm20i"; // Public fallback key (Rate limited)
 
@@ -76,31 +75,24 @@ function AirdropLensLogic() {
   // --- INFRASTRUCTURE: LIVE GAS TRACKER ---
   // Fetches real gas from Mainnet and Base every 15s
   useEffect(() => {
-    const fetchGas = async () => {
-      try {
-        // Parallel fetching for speed
-        const [ethRes, baseRes] = await Promise.all([
-          fetch(`https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`, {
-            method: 'POST',
-            body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_gasPrice' })
-          }),
-          fetch(`https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`, {
-            method: 'POST',
-            body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_gasPrice' })
-          })
-        ]);
-
-        const ethData = await ethRes.json();
-        const baseData = await baseRes.json();
-
-        setGasPrices({
-          eth: Math.round(parseInt(ethData.result, 16) / 1e9),
-          base: Math.round(parseInt(baseData.result, 16) / 1e9)
-        });
-      } catch (err) {
-        console.warn("Gas fetch failed - using fallback UI", err);
-      }
-    };
+    // Add this inside your useEffect or polling function
+const getGas = async () => {
+  try {
+    // 1. Get fee data from the provider
+    const feeData = await provider.getFeeData(); 
+    
+    // 2. Format it to Gwei (human readable)
+    // In ethers v6, use ethers.formatUnits. In v5, use ethers.utils.formatUnits
+    const gasInGwei = ethers.formatUnits(feeData.gasPrice, "gwei");
+    
+    // 3. Round it for a clean UI
+    const cleanGas = parseFloat(gasInGwei).toFixed(0);
+    
+    setGasPrice(cleanGas); // Update your state
+  } catch (err) {
+    console.error("Gas fetch failed:", err);
+  }
+};
 
     fetchGas(); // Initial call
     const interval = setInterval(fetchGas, 15000); // 15s Refresh
