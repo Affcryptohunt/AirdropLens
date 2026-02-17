@@ -23,7 +23,6 @@ import { mainnet, base, optimism, arbitrum } from 'wagmi/chains';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { http } from 'viem';
 import { checkBaseBridgeUsage, checkAerodromeUser, checkUniswapUser, checkMainnetUniswap, checkENSUser, calculateSybilRisk } from './utils/eligibility';
-import { Analytics } from "@vercel/analytics/next"// TODO: Replace hardcoded Project ID with process.env.VITE_WALLET_CONNECT_ID
 // TODO: Replace generic Alchemy keys with process.env.VITE_ALCHEMY_KEY for higher rate limits
 const ALCHEMY_KEY = "ytxCB4rIWPgqDz3knm20i"; // Public fallback key (Rate limited)
 
