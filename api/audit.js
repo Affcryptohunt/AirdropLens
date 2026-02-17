@@ -13,7 +13,8 @@ export default async function handler(request, response) {
     try {
         // 2. Connect to BOTH networks (Base & Ethereum)
         // This forces the code to use the specific network IDs (1 for Eth, 8453 for Base)
-const baseProvider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL, 8453, { staticNetwork: true });
+// ✅ Use the NEW names you created in the Vercel Dashboard
+const baseProvider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL, 8453, { staticNetwork: true });
 const ethProvider = new ethers.JsonRpcProvider(process.env.ETH_RPC_URL, 1, { staticNetwork: true });
 
         // 3. Fetch data from BOTH chains in parallel
