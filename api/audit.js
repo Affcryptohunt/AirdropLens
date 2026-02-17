@@ -1,7 +1,8 @@
 import { ethers } from 'ethers';
 
 export default async function handler(request, response) {
-    // 1. FIX: Get the address directly from the query object
+    console.log("BASE KEY EXISTS:", !!process.env.ALCHEMY_RPC_URL);
+    console.log("ETH KEY EXISTS:", !!process.env.ETH_RPC_URL);  // 1. FIX: Get the address directly from the query object
     // This is safer and won't crash on Vercel
     const address = request.query.address;
 
@@ -11,8 +12,9 @@ export default async function handler(request, response) {
 
     try {
         // 2. Connect to BOTH networks (Base & Ethereum)
-        const baseProvider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL);
-        const ethProvider = new ethers.JsonRpcProvider(process.env.ETH_RPC_URL);
+        // This forces the code to use the specific network IDs (1 for Eth, 8453 for Base)
+const baseProvider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL, 8453, { staticNetwork: true });
+const ethProvider = new ethers.JsonRpcProvider(process.env.ETH_RPC_URL, 1, { staticNetwork: true });
 
         // 3. Fetch data from BOTH chains in parallel
         const [baseBalance, baseTxCount, ethBalance, ethName] = await Promise.all([
