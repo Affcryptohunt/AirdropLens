@@ -1,37 +1,35 @@
 import { ethers } from 'ethers';
 
 export default async function handler(request, response) {
-    const { searchParams } = new URL(request.url);
-    const address = searchParams.get('address');
+    // 1. FIX: Get the address directly from the query object
+    // This is safer and won't crash on Vercel
+    const address = request.query.address;
 
     if (!address || !ethers.isAddress(address)) {
         return response.status(400).json({ error: "Invalid wallet address" });
     }
 
     try {
-        // 1. Connect to BOTH networks (Base & Ethereum)
-        // We use the variables you set in Vercel
-        const baseProvider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL); // Base
-        const ethProvider = new ethers.JsonRpcProvider(process.env.ETH_RPC_URL);      // Ethereum
+        // 2. Connect to BOTH networks (Base & Ethereum)
+        const baseProvider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL);
+        const ethProvider = new ethers.JsonRpcProvider(process.env.ETH_RPC_URL);
 
-        // 2. Fetch data from BOTH chains in parallel (Fast!)
+        // 3. Fetch data from BOTH chains in parallel
         const [baseBalance, baseTxCount, ethBalance, ethName] = await Promise.all([
             baseProvider.getBalance(address),
             baseProvider.getTransactionCount(address),
             ethProvider.getBalance(address),
-            ethProvider.lookupAddress(address) // Checks for ENS (e.g., imran.eth)
+            ethProvider.lookupAddress(address)
         ]);
 
-        // 3. Simple Sybil Logic (Cross-Chain)
-        // If they have < 0.005 ETH on Mainnet, they might be a bot
-        const isLowEth = ethers.formatEther(ethBalance) < 0.005;
+        // 4. Sybil Logic
+        const isLowEth = parseFloat(ethers.formatEther(ethBalance)) < 0.005;
         const isLowTx = baseTxCount < 5;
         
         let riskScore = "LOW";
         if (isLowEth || isLowTx) riskScore = "MEDIUM";
         if (isLowEth && isLowTx) riskScore = "HIGH";
 
-        // 4. Return the "Master Airdrop Hunter" JSON
         return response.status(200).json({
             meta: {
                 engine: "AirdropLens Multi-Chain",
