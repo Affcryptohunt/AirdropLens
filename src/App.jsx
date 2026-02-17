@@ -14,6 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Search, ListChecks, Activity, Loader2, FileSpreadsheet, Flame, Twitter, ExternalLink, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ethers } from 'ethers';
+import { Analytics } from '@vercel/analytics/react';
 
 // --- WEB3 ENGINE IMPORTS ---
 import '@rainbow-me/rainbowkit/styles.css';
@@ -50,6 +51,7 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={darkTheme()} modalSize="compact">
           <AirdropLensLogic />
+          <Analytics />
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
