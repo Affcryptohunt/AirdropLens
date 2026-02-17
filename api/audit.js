@@ -57,7 +57,11 @@ export default async function handler(request, response) {
         });
 
     } catch (error) {
-        console.error("API Error:", error);
-        return response.status(500).json({ error: "Failed to fetch cross-chain data" });
+        // This will send the REAL error message to your browser
+        return response.status(500).json({ 
+            error: "Engine Error", 
+            message: error.message,
+            stack: error.code // Tells us if it's a timeout or bad auth
+        });
     }
 }
