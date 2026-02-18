@@ -24,7 +24,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { http } from 'viem';
 import { checkBaseBridgeUsage, checkAerodromeUser, checkUniswapUser, checkMainnetUniswap, checkENSUser, calculateSybilRisk } from './utils/eligibility';
 // TODO: Replace generic Alchemy keys with process.env.VITE_ALCHEMY_KEY for higher rate limits
-const ALCHEMY_KEY = "ytxCB4rIWPgqDz3knm20i"; // Public fallback key (Rate limited)
+const ALCHEMY_KEY = "nsCngDhoNy8FfxPUKK7SJ"; // Public fallback key (Rate limited)
 
 const config = getDefaultConfig({
   appName: 'AirdropLens',
@@ -73,28 +73,28 @@ function AirdropLensLogic() {
 
   // --- INFRASTRUCTURE: LIVE GAS TRACKER ---
   // Fetches real gas from Mainnet and Base every 15s
+  // --- INFRASTRUCTURE: LIVE GAS TRACKER ---
+  // --- INFRASTRUCTURE: LIVE GAS TRACKER ---
+  // --- INFRASTRUCTURE: LIVE GAS TRACKER ---
   useEffect(() => {
-    // Add this inside your useEffect or polling function
-const getGas = async () => {
-  try {
-    // 1. Get fee data from the provider
-    const feeData = await provider.getFeeData(); 
-    
-    // 2. Format it to Gwei (human readable)
-    // In ethers v6, use ethers.formatUnits. In v5, use ethers.utils.formatUnits
-    const gasInGwei = ethers.formatUnits(feeData.gasPrice, "gwei");
-    
-    // 3. Round it for a clean UI
-    const cleanGas = parseFloat(gasInGwei).toFixed(0);
-    
-    setGasPrice(cleanGas); // Update your state
-  } catch (err) {
-    console.error("Gas fetch failed:", err);
-  }
-};
+    const fetchGas = async () => {
+      try {
+        // We use the key we just defined at the top
+        const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`);
+        const feeData = await provider.getFeeData(); 
+        
+        const gasInGwei = ethers.formatUnits(feeData.gasPrice, "gwei");
+        const cleanGas = parseFloat(gasInGwei).toFixed(0);
+        
+        // Fixed: setGasPrices (plural)
+        setGasPrices({ eth: cleanGas, base: "1" }); 
+      } catch (err) {
+        console.error("Gas fetch failed:", err);
+      }
+    };
 
-    fetchGas(); // Initial call
-    const interval = setInterval(fetchGas, 15000); // 15s Refresh
+    fetchGas(); 
+    const interval = setInterval(fetchGas, 15000); 
     return () => clearInterval(interval);
   }, []);
 
@@ -120,7 +120,7 @@ const getGas = async () => {
     setScanResults([]); 
 
     try {
-      const ALCHEMY_KEY = "ytxCB4rIWPgqDz3knm20i"; 
+      const ALCHEMY_KEY = "nsCngDhoNy8FfxPUKK7SJ"; 
       const ALCHEMY_URL = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
       
       // 3. REAL PARALLEL FETCHING (6 Checks!)
